@@ -32,6 +32,10 @@ class ZedPublisher(Node):
             self.zed.retrieve_image(self.image, sl.VIEW.LEFT)
             # Convert ZED image to OpenCV format
             frame = self.image.get_data()
+            if frame.ndim == 2:  # Grayscale image
+                frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)  # Convert to BGR
+            elif frame.shape[2] == 4:  # RGBA image
+                frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2BGR)  # Convert to BGR
             # Convert to ROS Image message
             ros_image = self.bridge.cv2_to_imgmsg(frame, encoding='bgr8')
             self.publisher.publish(ros_image)
